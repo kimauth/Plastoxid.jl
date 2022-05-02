@@ -111,7 +111,7 @@ function assemble_cell!(
             Nᶜᵢ = shape_value(cv_c, qp, i)
             ∇ᵍᵇNᶜᵢ = shape_gradient(cv_c, qp, i) ⋅ R
             re_c[i] += ( (cᵍᵇ - cᵍᵇ_old) * Nᶜᵢᵐⁱᵈ - Δt * jᵍᵇ ⋅ ∇ᵍᵇNᶜᵢᵐⁱᵈ +
-                       h/12 * (Δc - Δc_old) * Nᶜᵢ + Δt / h * D * Δc * Nᶜᵢ + Δt*h/12 * Δj ⋅ ∇ᵍᵇNᶜᵢ ) * dA
+                       h/12 * (Δc - Δc_old) * Nᶜᵢ - Δt / h * D * Δc * Nᶜᵢ - Δt*h/12 * Δj ⋅ ∇ᵍᵇNᶜᵢ ) * dA
             for j in 1:getnbasefunctions(cv_c)
                 Nᶜⱼ = shape_value(cv_c, qp, j)
                 ∇ᵍᵇNᶜⱼ = shape_gradient(cv_c, qp, j) ⋅ R
@@ -134,8 +134,8 @@ function assemble_cell!(
 
                 ke_cc[i,j] += h * Nᶜⱼᵐⁱᵈ * Nᶜᵢᵐⁱᵈ * dA -
                              Δt * ∂jᵍᵇ∂c̲ⱼ ⋅ ∇ᵍᵇNᶜᵢᵐⁱᵈ * dA +
-                             h/12. * Nᶜⱼ * Nᶜᵢ * dA +
-                             Δt/h * D * Nᶜⱼ * Nᶜᵢ * dA +
+                             h/12. * Nᶜⱼ * Nᶜᵢ * dA -
+                             Δt/h * D * Nᶜⱼ * Nᶜᵢ * dA -
                              Δt*h/12. * ∂Δj∂c̲ⱼ ⋅ ∇ᵍᵇNᶜᵢ * dA
             end
 
@@ -158,7 +158,7 @@ function assemble_cell!(
                 ∂jᵍᵇ∂u̲ⱼ = heaviside(cᵐⁱᵈ) * h * M * cᵐⁱᵈ * ∂∇ᵍᵇT̂ₙ∂u̲ⱼ
                 ∂Δj∂u̲ⱼ = h * M * Δc * ∂∇ᵍᵇT̂ₙ∂u̲ⱼ
 
-                ke_cu[i,j] += -Δt * ∂jᵍᵇ∂u̲ⱼ ⋅ ∇ᵍᵇNᶜᵢᵐⁱᵈ * dA + Δt*h/12. * ∂Δj∂u̲ⱼ ⋅ ∇ᵍᵇNᶜᵢ * dA
+                ke_cu[i,j] += -Δt * ∂jᵍᵇ∂u̲ⱼ ⋅ ∇ᵍᵇNᶜᵢᵐⁱᵈ * dA - Δt*h/12. * ∂Δj∂u̲ⱼ ⋅ ∇ᵍᵇNᶜᵢ * dA
             end
         end
 
